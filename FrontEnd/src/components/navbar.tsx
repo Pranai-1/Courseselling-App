@@ -34,9 +34,9 @@ function Navbar() {
   return (
     <>
       
-      <div className="fixed w-screen h-[45px] bg-slate-50 flex justify-between">
+      <div className=" w-screen h-[45px] bg-gray-100 flex justify-between relative">
 
-        
+
       <Sidebar bar={bar}  userEmail={userEmail} sidebar={sidebar} logout={logout} closeSidebar={closeSidebar}/>
         
         <h1 className="font-bold text-xl p-2 ml-2 text-red-600 ">Dev Academy</h1>
