@@ -15,7 +15,7 @@ interface User {
 }
 
 export const UserState = atom<User>({
-  key: 'CourseState',
+  key: 'UserState',
   default: {
     userEmail:null,
     purchasedCourses:[],
