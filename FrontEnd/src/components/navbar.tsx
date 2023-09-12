@@ -1,102 +1,87 @@
-import  { useState } from "react";
-import { useNavigate } from "react-router-dom";
+
+import { NavLink, useNavigate } from "react-router-dom";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import { UserEmail } from "../store/selectors/userDetails"; 
 import { UserState } from "../store/atoms/user"; 
+import Sidebar from "./Sidebar";
+import 'font-awesome/css/font-awesome.min.css';
+import {  useState } from "react";
 
 function Navbar() {
   const navigate = useNavigate();
-  const [showSidebar, setShowSidebar] = useState(false);
+  const[bar,setBar]=useState<boolean>(false)
   const userEmail = useRecoilValue(UserEmail); 
   const userState = useSetRecoilState(UserState); 
 
-  const toggleSidebar = () => {
-    setShowSidebar((prevShowSidebar) => !prevShowSidebar);
-  };
-
+  function sidebar(){
+   setBar((prev)=>!prev)
+  }
+  function closeSidebar(){
+    setBar(false)
+   }
+   function logout(){
+      localStorage.removeItem("token");
+      userState({
+        userEmail: null,
+        purchasedCourses: [],
+        cart: [],
+      });
+      navigate("/");
+      closeSidebar()
+    }
+   
+ 
   return (
     <>
-      {/* navbar starting..... */}
-      <div className="fixed w-screen h-[45px] bg-indigo-400 flex justify-between">
-        <div className="flex">
-          <div
-            className="p-1 mb-1 mr-2 font-bold text-3xl cursor-pointer"
-            onClick={toggleSidebar}
-          >
-            &#8801;
-          </div>
-          {showSidebar && (
-            <div className="fixed top-[45px] left-0 w-[200px] h-screen p-4">
-              {/* Sidebar content */}
-              <ul className="text-white">
-                <li
-                  onClick={() => {
-                    if (userEmail) {
-                      navigate("/user/courses");
-                    } else {
-                      alert("Login to continue");
-                    }
-                  }}
-                  className="font-medium p-2 cursor-pointer text-blue-700 hover:text-red-600"
-                >
-                  All Courses
-                </li>
-                <li
-                  onClick={() => {
-                    if (userEmail) {
-                      navigate("/user/courses/purchased");
-                    } else {
-                      alert("Login to continue");
-                    }
-                  }}
-                  className="font-medium p-2 cursor-pointer text-blue-700 hover:text-red-600"
-                >
-                  Purchased Courses
-                </li>
-                <li
-                  onClick={() => {
-                    if (userEmail) {
-                      navigate("/user/courses/cart");
-                    } else {
-                      alert("Login to continue");
-                    }
-                  }}
-                  className="font-medium p-2 cursor-pointer text-blue-700 hover:text-red-600"
-                >
-                  Cart
-                </li>
-               
-              </ul>
-            </div>
-          )}
-          <div className="font-bold text-xl p-2 text-red-600">Dev Academy</div>
-        </div>
-        <ul className="hidden md:flex">
-          <li className="md:font-medium md:p-2 md:m-1 cursor-pointer hover:text-indigo-700">
-            Home
-          </li>
-          <li className="md:font-medium md:p-2 md:m-1 cursor-pointer hover:text-indigo-700">
-            About Us
-          </li>
-          <li className="md:font-medium md:p-2 md:m-1 cursor-pointer hover:text-indigo-700">
-            Contact Us
-          </li>
+      
+      <div className="fixed w-screen h-[45px] bg-slate-50 flex justify-between">
+
+        
+      <Sidebar bar={bar}  userEmail={userEmail} sidebar={sidebar} logout={logout} closeSidebar={closeSidebar}/>
+        
+        <h1 className="font-bold text-xl p-2 ml-2 text-red-600 ">Dev Academy</h1>
+        <NavLink to="/user/courses/cart"
+              className={({isActive})=>`md:hidden  mr-10 text-lg flex justify-between items-center cursor-pointer ${isActive ?"text-orange-600":"text-gray-700"} hover:text-indigo-700`}>
+               <i className="fa fa-shopping-cart"></i> 
+              
+        </NavLink>
+    
+       
+         <ul className="hidden md:flex md:justify-center md:items-center gap-14">
+              <li>
+            <NavLink to="/"
+              className={({isActive})=>`md:font-medium  cursor-pointer ${isActive ?"text-orange-600":"text-gray-700"} hover:text-indigo-700`}>
+                Home
+              </NavLink>
+              </li>
+              <li>
+            <NavLink to="/user/courses/all"
+              className={({isActive})=>`md:font-medium  cursor-pointer ${isActive ?"text-orange-600":"text-gray-700"} hover:text-indigo-700`}>
+                Courses
+              </NavLink>
+              </li>
+              <li>
+            <NavLink to="/user/courses/cart"
+              className={({isActive})=>`md:font-medium  cursor-pointer ${isActive ?"text-orange-600":"text-gray-700"} hover:text-indigo-700`}>
+               <i className="fa fa-shopping-cart m-2 text-lg"></i> 
+               <span className="fo">Cart</span>
+              </NavLink>
+              </li>
+              <li>
+            <NavLink to="/user/courses/purchased"
+              className={({isActive})=>`md:font-medium  cursor-pointer ${isActive ?"text-orange-600":"text-gray-700"} hover:text-indigo-700`}>
+              
+               <span className="fo">My Learning</span>
+              </NavLink>
+              </li>
         </ul>
         {userEmail ? (
           <>
-            <div className="hidden md:flex font-bold text-white">
-              <p className="text-xs mt-3 text-black mr-5">{userEmail}</p>
-              <button
-                onClick={() => {
-                  localStorage.removeItem("token");
-                  userState({
-                    userEmail: null,
-                    purchasedCourses: [],
-                    cart: [],
-                  });
-                  navigate("/");
-                }}
-                className="p-1 mt-1.5 m-1 h-max w-auto bg-indigo-600 rounded hover:bg-indigo-800 text-white cursor-pointer mr-7"
+            <div className="hidden md:flex font-bold text-white justify-center mr-5 gap-5">
+              <p className="text-xs mt-3 text-black mr-5 font-normal">{userEmail}</p>
+              <button 
+                onClick={logout}
+                className="p-1  m-1  bg-indigo-600 rounded hover:bg-indigo-800 text-white cursor-pointer"
               >
                 Logout
               </button>
@@ -121,11 +106,9 @@ function Navbar() {
           </>
         )}
 
-        <div className="font-bold text-2xl mr-2 cursor-pointer md:hidden">
-          <a href="#">&#8801;</a>
-        </div>
+       
       </div>
-      {/* navbar ending.... */}
+      
     </>
   );
 }

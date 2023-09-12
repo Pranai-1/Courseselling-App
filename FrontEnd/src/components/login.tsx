@@ -36,7 +36,7 @@ function Login() {
             cart:[]
 
           })
-          navigate("/user/courses")
+          navigate("/user/courses/all")
          
         } else {
          alert("Login failed")
